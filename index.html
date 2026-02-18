@@ -2,13 +2,14 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Consolidation Crush - 連結会計パズル</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -19,6 +20,8 @@
             justify-content: center;
             align-items: center;
             color: #fff;
+            overflow-x: hidden;
+            touch-action: manipulation;
         }
 
         .game-container {
@@ -105,6 +108,7 @@
             transition: all 0.1s ease;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            user-select: none;
         }
 
         .block .company {
@@ -118,19 +122,16 @@
             line-height: 1.2;
         }
 
-        /* P社ブロック（青系） */
         .block.p-company {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: 2px solid #a78bfa;
         }
 
-        /* S社ブロック（緑系） */
         .block.s-company {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             border: 2px solid #6ee7b7;
         }
 
-        /* 特殊ブロック */
         .block.investment {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             border: 2px solid #fbbf24;
@@ -321,10 +322,224 @@
             border-left-color: #ffd700;
             background: rgba(255, 215, 0, 0.1);
         }
+
+        /* モバイル用コントロールパッド */
+        .mobile-controls {
+            display: none;
+            width: 100%;
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 70px;
+            height: 60px;
+            border: none;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .control-btn.direction {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .control-btn.drop {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            width: 150px;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        /* モバイル用ヘッダー */
+        .mobile-header {
+            display: none;
+            width: 100%;
+            padding: 10px 15px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-header .title h1 {
+            font-size: 18px;
+        }
+
+        .mobile-header .title p {
+            font-size: 10px;
+        }
+
+        .mobile-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .mobile-stat {
+            text-align: center;
+        }
+
+        .mobile-stat .label {
+            font-size: 10px;
+            color: #8892b0;
+        }
+
+        .mobile-stat .value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .mobile-stat .value.score {
+            color: #64ffda;
+        }
+
+        .mobile-stat .value.level {
+            color: #ffd93d;
+        }
+
+        /* モバイルレスポンシブ */
+        @media (max-width: 900px) {
+            .side-panel {
+                display: none;
+            }
+
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .mobile-controls {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .game-board {
+                width: 320px;
+                height: 500px;
+            }
+
+            .block {
+                width: 62px;
+                padding: 6px;
+                font-size: 10px;
+            }
+
+            .block .company {
+                font-size: 9px;
+            }
+
+            .block .account {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .game-board {
+                width: 280px;
+                height: 450px;
+            }
+
+            .block {
+                width: 54px;
+                padding: 5px;
+            }
+
+            .control-btn {
+                width: 60px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .control-btn.drop {
+                width: 130px;
+            }
+        }
+
+        /* スタート画面オーバーレイ */
+        .start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 150;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .start-overlay.hidden {
+            display: none;
+        }
+
+        .start-overlay h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #64ffda 0%, #ffd93d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .start-overlay .rules {
+            font-size: 12px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: #ccc;
+            max-width: 300px;
+        }
+
+        .start-overlay .rules strong {
+            color: #64ffda;
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
+        <!-- モバイル用ヘッダー -->
+        <div class="mobile-header">
+            <div class="title">
+                <h1>Consolidation Crush</h1>
+                <p>連結会計パズル</p>
+            </div>
+            <div class="mobile-stats">
+                <div class="mobile-stat">
+                    <div class="label">SCORE</div>
+                    <div class="value score" id="mobileScore">0</div>
+                </div>
+                <div class="mobile-stat">
+                    <div class="label">LEVEL</div>
+                    <div class="value level" id="mobileLevel">1</div>
+                </div>
+            </div>
+        </div>
+
         <div class="side-panel">
             <div class="title">
                 <h1>Consolidation Crush</h1>
@@ -354,11 +569,38 @@
 
         <div class="game-board-container">
             <div class="game-board" id="gameBoard">
+                <!-- スタート画面 -->
+                <div class="start-overlay" id="startOverlay">
+                    <h2>Consolidation Crush</h2>
+                    <div class="rules">
+                        <p><strong>内部取引消去パズル</strong></p>
+                        <p>P社（紫）とS社（緑）のブロックを<br>隣接させて消去しよう！</p>
+                        <br>
+                        <p><strong>消去ペア:</strong></p>
+                        <p>売掛金 × 買掛金</p>
+                        <p>売上高 × 仕入高</p>
+                        <p>貸付金 × 借入金</p>
+                        <br>
+                        <p><strong>スペシャルコンボ:</strong></p>
+                        <p>子会社株式 × 資本金<br>→ のれん生成！(500点)</p>
+                    </div>
+                    <button class="btn-start" id="startBtnOverlay">タップしてスタート</button>
+                </div>
+
                 <div class="game-over-overlay" id="gameOver">
                     <h2>GAME OVER</h2>
                     <p>最終スコア: <span id="finalScore">0</span></p>
                     <button class="btn-start" onclick="startGame()">もう一度プレイ</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- モバイル用コントロール -->
+        <div class="mobile-controls" id="mobileControls">
+            <div class="control-row">
+                <button class="control-btn direction" id="btnLeft">←</button>
+                <button class="control-btn drop" id="btnDrop">↓ 落下</button>
+                <button class="control-btn direction" id="btnRight">→</button>
             </div>
         </div>
 
@@ -369,7 +611,7 @@
                     <p><kbd>←</kbd> <kbd>→</kbd> 左右移動</p>
                     <p><kbd>↓</kbd> 高速落下</p>
                     <p><kbd>Space</kbd> 即座に落下</p>
-                    <p><kbd>クリック</kbd> ブロック選択・交換</p>
+                    <p><kbd>タップ</kbd> ブロック選択・交換</p>
                 </div>
             </div>
 
@@ -406,27 +648,47 @@
 
     <script>
         // ゲーム設定
-        const BOARD_WIDTH = 360;
-        const BOARD_HEIGHT = 600;
-        const BLOCK_WIDTH = 70;
-        const BLOCK_HEIGHT = 50;
-        const COLUMNS = 5;
+        let BOARD_WIDTH = 360;
+        let BOARD_HEIGHT = 600;
+        let BLOCK_WIDTH = 70;
+        let BLOCK_HEIGHT = 50;
+        let COLUMNS = 5;
+
+        // モバイル判定とサイズ調整
+        function adjustForMobile() {
+            if (window.innerWidth <= 900) {
+                if (window.innerWidth <= 360) {
+                    BOARD_WIDTH = 280;
+                    BOARD_HEIGHT = 450;
+                    BLOCK_WIDTH = 54;
+                    BLOCK_HEIGHT = 44;
+                } else {
+                    BOARD_WIDTH = 320;
+                    BOARD_HEIGHT = 500;
+                    BLOCK_WIDTH = 62;
+                    BLOCK_HEIGHT = 46;
+                }
+            } else {
+                BOARD_WIDTH = 360;
+                BOARD_HEIGHT = 600;
+                BLOCK_WIDTH = 70;
+                BLOCK_HEIGHT = 50;
+            }
+        }
+
+        adjustForMobile();
+        window.addEventListener('resize', adjustForMobile);
 
         // ブロックタイプ定義
         const BLOCK_TYPES = {
-            // P社（親会社）の勘定科目
             P_AR: { company: 'P社', account: '売掛金', type: 'p-company', pair: 'S_AP' },
             P_SALES: { company: 'P社', account: '売上高', type: 'p-company', pair: 'S_COGS' },
             P_LOAN: { company: 'P社', account: '貸付金', type: 'p-company', pair: 'S_BORROWING' },
             P_INVENTORY: { company: 'P社', account: '商品', type: 'p-company', pair: 'S_INVENTORY' },
-
-            // S社（子会社）の勘定科目
             S_AP: { company: 'S社', account: '買掛金', type: 's-company', pair: 'P_AR' },
             S_COGS: { company: 'S社', account: '仕入高', type: 's-company', pair: 'P_SALES' },
             S_BORROWING: { company: 'S社', account: '借入金', type: 's-company', pair: 'P_LOAN' },
             S_INVENTORY: { company: 'S社', account: '商品', type: 's-company', pair: 'P_INVENTORY' },
-
-            // 特殊ブロック
             INVESTMENT: { company: 'P社', account: '子会社株式', type: 'investment', pair: 'EQUITY' },
             EQUITY: { company: 'S社', account: '資本金', type: 'equity', pair: 'INVESTMENT' },
             GOODWILL: { company: '', account: 'のれん', type: 'goodwill', pair: null }
@@ -449,16 +711,23 @@
         const gameBoard = document.getElementById('gameBoard');
         const scoreDisplay = document.getElementById('score');
         const levelDisplay = document.getElementById('level');
+        const mobileScoreDisplay = document.getElementById('mobileScore');
+        const mobileLevelDisplay = document.getElementById('mobileLevel');
         const nextPreview = document.getElementById('nextPreview');
         const eliminationLog = document.getElementById('eliminationLog');
         const gameOverOverlay = document.getElementById('gameOver');
+        const startOverlay = document.getElementById('startOverlay');
         const startBtn = document.getElementById('startBtn');
+        const startBtnOverlay = document.getElementById('startBtnOverlay');
         const pauseBtn = document.getElementById('pauseBtn');
 
-        // ランダムなブロックタイプを取得
+        // モバイルコントロール
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnDrop = document.getElementById('btnDrop');
+
         function getRandomBlockType() {
             const types = Object.keys(BLOCK_TYPES).filter(t => t !== 'GOODWILL');
-            // 投資と資本は少し出にくくする
             const weights = types.map(t => {
                 if (t === 'INVESTMENT' || t === 'EQUITY') return 0.5;
                 return 1;
@@ -473,7 +742,6 @@
             return types[0];
         }
 
-        // ブロックを生成
         function createBlock(typeKey, x, y) {
             const blockType = BLOCK_TYPES[typeKey];
             const block = document.createElement('div');
@@ -485,17 +753,25 @@
             block.style.left = x + 'px';
             block.style.top = y + 'px';
             block.style.height = BLOCK_HEIGHT + 'px';
+            block.style.width = BLOCK_WIDTH + 'px';
 
             block.dataset.typeKey = typeKey;
             block.dataset.x = x;
             block.dataset.y = y;
 
-            block.addEventListener('click', () => handleBlockClick(block));
+            // タッチとクリックの両方に対応
+            block.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleBlockClick(block);
+            });
+            block.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handleBlockClick(block);
+            });
 
             return block;
         }
 
-        // 次のブロックをプレビュー表示
         function updateNextPreview() {
             nextPreview.innerHTML = '';
             gameState.nextBlocks.slice(0, 3).forEach(typeKey => {
@@ -507,7 +783,6 @@
             });
         }
 
-        // 新しい落下ブロックを生成
         function spawnBlock() {
             if (gameState.nextBlocks.length < 5) {
                 for (let i = 0; i < 5; i++) {
@@ -533,7 +808,6 @@
             updateNextPreview();
         }
 
-        // ブロックの落下処理
         function updateFallingBlock(deltaTime) {
             if (!gameState.fallingBlock) return;
 
@@ -541,7 +815,6 @@
             const speed = gameState.fallSpeed * (1 + gameState.level * 0.2);
             block.y += speed;
 
-            // 着地判定
             const landingY = findLandingY(block.x);
 
             if (block.y >= landingY) {
@@ -554,7 +827,6 @@
             block.element.style.top = block.y + 'px';
         }
 
-        // 着地位置を計算
         function findLandingY(x) {
             let minY = BOARD_HEIGHT - BLOCK_HEIGHT;
 
@@ -573,27 +845,23 @@
             return minY;
         }
 
-        // ブロック着地処理
         function landBlock(block) {
             block.element.dataset.x = block.x;
             block.element.dataset.y = block.y;
             gameState.blocks.push(block.element);
             gameState.fallingBlock = null;
 
-            // ゲームオーバー判定
             if (block.y < 0) {
                 gameOver();
                 return;
             }
 
-            // 消去チェック
             setTimeout(() => {
                 checkEliminations();
                 setTimeout(spawnBlock, 300);
             }, 100);
         }
 
-        // 消去判定
         function checkEliminations() {
             let eliminated = false;
             const toRemove = [];
@@ -611,7 +879,6 @@
                     const x2 = parseFloat(block2.dataset.x);
                     const y2 = parseFloat(block2.dataset.y);
 
-                    // 隣接判定（上下左右）
                     const isAdjacent = (
                         (Math.abs(x1 - x2) < BLOCK_WIDTH * 1.2 && Math.abs(y1 - y2) < 10) ||
                         (Math.abs(y1 - y2) < BLOCK_HEIGHT * 1.2 && Math.abs(x1 - x2) < 10)
@@ -621,12 +888,10 @@
                         const type1 = block1.dataset.typeKey;
                         const type2 = block2.dataset.typeKey;
 
-                        // ペア判定
                         if (BLOCK_TYPES[type1].pair === type2) {
                             toRemove.push(block1, block2);
                             eliminated = true;
 
-                            // 投資と資本の相殺 → のれん生成
                             if ((type1 === 'INVESTMENT' && type2 === 'EQUITY') ||
                                 (type1 === 'EQUITY' && type2 === 'INVESTMENT')) {
                                 goodwillPositions.push({
@@ -647,7 +912,6 @@
                 }
             }
 
-            // ブロック削除とエフェクト
             toRemove.forEach(block => {
                 showEliminationEffect(block);
                 block.remove();
@@ -657,7 +921,6 @@
                 }
             });
 
-            // のれんブロック生成
             goodwillPositions.forEach(pos => {
                 setTimeout(() => {
                     const goodwill = createBlock('GOODWILL', pos.x, pos.y);
@@ -666,7 +929,6 @@
                 }, 500);
             });
 
-            // 落下処理
             if (eliminated) {
                 setTimeout(() => {
                     applyGravity();
@@ -676,7 +938,6 @@
             }
         }
 
-        // 重力適用（浮いているブロックを落とす）
         function applyGravity() {
             let moved = true;
             while (moved) {
@@ -694,7 +955,6 @@
                 });
             }
 
-            // 重力適用後に再度消去チェック
             setTimeout(checkEliminations, 200);
         }
 
@@ -717,7 +977,6 @@
             return minY;
         }
 
-        // エフェクト表示
         function showEliminationEffect(block) {
             const effect = document.createElement('div');
             effect.className = 'elimination-effect';
@@ -738,35 +997,32 @@
             setTimeout(() => combo.remove(), 1000);
         }
 
-        // ログ追加
         function addLog(message, isGoodwill = false) {
             const entry = document.createElement('div');
             entry.className = `log-entry ${isGoodwill ? 'goodwill' : ''}`;
             entry.textContent = message;
             eliminationLog.insertBefore(entry, eliminationLog.firstChild);
 
-            // 古いログを削除
             while (eliminationLog.children.length > 10) {
                 eliminationLog.removeChild(eliminationLog.lastChild);
             }
         }
 
-        // スコア更新
         function updateScore() {
             scoreDisplay.textContent = gameState.score;
+            mobileScoreDisplay.textContent = gameState.score;
         }
 
-        // レベルアップチェック
         function checkLevelUp() {
             const newLevel = Math.floor(gameState.score / 500) + 1;
             if (newLevel > gameState.level) {
                 gameState.level = newLevel;
                 levelDisplay.textContent = gameState.level;
+                mobileLevelDisplay.textContent = gameState.level;
                 showComboText(`Level ${gameState.level}!`);
             }
         }
 
-        // ブロッククリック処理
         function handleBlockClick(block) {
             if (!gameState.isRunning || gameState.isPaused) return;
             if (gameState.fallingBlock && gameState.fallingBlock.element === block) return;
@@ -776,7 +1032,6 @@
                     block.style.outline = 'none';
                     gameState.selectedBlock = null;
                 } else {
-                    // ブロック交換
                     swapBlocks(gameState.selectedBlock, block);
                     gameState.selectedBlock.style.outline = 'none';
                     gameState.selectedBlock = null;
@@ -787,14 +1042,12 @@
             }
         }
 
-        // ブロック交換
         function swapBlocks(block1, block2) {
             const x1 = block1.dataset.x;
             const y1 = block1.dataset.y;
             const x2 = block2.dataset.x;
             const y2 = block2.dataset.y;
 
-            // 隣接チェック
             const dx = Math.abs(parseFloat(x1) - parseFloat(x2));
             const dy = Math.abs(parseFloat(y1) - parseFloat(y2));
 
@@ -813,37 +1066,51 @@
             }
         }
 
-        // キーボード操作
-        document.addEventListener('keydown', (e) => {
+        // 落下中ブロックの移動
+        function moveBlock(direction) {
             if (!gameState.isRunning || gameState.isPaused || !gameState.fallingBlock) return;
 
             const block = gameState.fallingBlock;
             const columnWidth = BOARD_WIDTH / COLUMNS;
 
+            if (direction === 'left' && block.column > 0) {
+                block.column--;
+                block.x = block.column * columnWidth + (columnWidth - BLOCK_WIDTH) / 2;
+                block.element.style.left = block.x + 'px';
+            } else if (direction === 'right' && block.column < COLUMNS - 1) {
+                block.column++;
+                block.x = block.column * columnWidth + (columnWidth - BLOCK_WIDTH) / 2;
+                block.element.style.left = block.x + 'px';
+            }
+        }
+
+        function dropBlock() {
+            if (!gameState.isRunning || gameState.isPaused || !gameState.fallingBlock) return;
+
+            const block = gameState.fallingBlock;
+            const landingY = findLandingY(block.x);
+            block.y = landingY;
+            block.element.style.top = block.y + 'px';
+            landBlock(block);
+        }
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.isRunning || gameState.isPaused || !gameState.fallingBlock) return;
+
             switch (e.key) {
                 case 'ArrowLeft':
-                    if (block.column > 0) {
-                        block.column--;
-                        block.x = block.column * columnWidth + (columnWidth - BLOCK_WIDTH) / 2;
-                        block.element.style.left = block.x + 'px';
-                    }
+                    moveBlock('left');
                     break;
                 case 'ArrowRight':
-                    if (block.column < COLUMNS - 1) {
-                        block.column++;
-                        block.x = block.column * columnWidth + (columnWidth - BLOCK_WIDTH) / 2;
-                        block.element.style.left = block.x + 'px';
-                    }
+                    moveBlock('right');
                     break;
                 case 'ArrowDown':
                     gameState.fallSpeed = 10;
                     break;
                 case ' ':
-                    // 即座に落下
-                    const landingY = findLandingY(block.x);
-                    block.y = landingY;
-                    block.element.style.top = block.y + 'px';
-                    landBlock(block);
+                    e.preventDefault();
+                    dropBlock();
                     break;
             }
         });
@@ -854,7 +1121,54 @@
             }
         });
 
-        // ゲームループ
+        // モバイルボタン操作
+        btnLeft.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveBlock('left');
+        });
+        btnLeft.addEventListener('click', () => moveBlock('left'));
+
+        btnRight.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveBlock('right');
+        });
+        btnRight.addEventListener('click', () => moveBlock('right'));
+
+        btnDrop.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            dropBlock();
+        });
+        btnDrop.addEventListener('click', dropBlock);
+
+        // スワイプ操作
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        gameBoard.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        gameBoard.addEventListener('touchend', (e) => {
+            if (!gameState.fallingBlock) return;
+
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+
+            // スワイプ判定（50px以上の移動）
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 0) {
+                    moveBlock('right');
+                } else {
+                    moveBlock('left');
+                }
+            } else if (dy > 50 && Math.abs(dy) > Math.abs(dx)) {
+                dropBlock();
+            }
+        }, { passive: true });
+
         function gameLoop(timestamp) {
             if (!gameState.isRunning) return;
 
@@ -868,9 +1182,9 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // ゲーム開始
         function startGame() {
-            // リセット
+            adjustForMobile();
+
             gameState.blocks.forEach(b => b.remove());
             gameState.blocks = [];
             gameState.fallingBlock = null;
@@ -883,7 +1197,9 @@
             eliminationLog.innerHTML = '';
             updateScore();
             levelDisplay.textContent = '1';
+            mobileLevelDisplay.textContent = '1';
             gameOverOverlay.classList.remove('show');
+            startOverlay.classList.add('hidden');
 
             gameState.isRunning = true;
             gameState.isPaused = false;
@@ -893,25 +1209,26 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // ゲームオーバー
         function gameOver() {
             gameState.isRunning = false;
             document.getElementById('finalScore').textContent = gameState.score;
             gameOverOverlay.classList.add('show');
         }
 
-        // 一時停止
         function togglePause() {
             if (!gameState.isRunning) return;
             gameState.isPaused = !gameState.isPaused;
             pauseBtn.textContent = gameState.isPaused ? '再開' : '一時停止';
         }
 
-        // イベントリスナー
         startBtn.addEventListener('click', startGame);
+        startBtnOverlay.addEventListener('click', startGame);
+        startBtnOverlay.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            startGame();
+        });
         pauseBtn.addEventListener('click', togglePause);
 
-        // 初期化
         updateNextPreview();
     </script>
 </body>
